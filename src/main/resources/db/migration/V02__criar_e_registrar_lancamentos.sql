@@ -7,6 +7,6 @@ CREATE TABLE lancamento
   valor numeric(16,2),
   tipo character varying(20),
   status character varying(20),
-  id_usuario bigint REFERENCES financas.usuario (id),
+  id_usuario bigint REFERENCES usuario (id),
   data_cadastro date default now()
 );
