@@ -1,5 +1,9 @@
-package io.github.joaopaulu.minhasfinancas.model;
+package io.github.joaopaulu.minhasfinancas.model.entity;
 
+import io.github.joaopaulu.minhasfinancas.model.enums.StatusLancamento;
+import io.github.joaopaulu.minhasfinancas.model.enums.TipoLancamento;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
@@ -8,6 +12,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name="lancamento", schema="minhasfinancas_api")
+@Data
+@Builder
 public class Lancamento {
 
     @Id
@@ -42,7 +48,5 @@ public class Lancamento {
     @Column(name ="status")
     @Enumerated(value = EnumType.STRING)
     private StatusLancamento status;
-
-
 
 }

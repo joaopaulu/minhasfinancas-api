@@ -1,14 +1,14 @@
-package io.github.joaopaulu.minhasfinancas.model;
+package io.github.joaopaulu.minhasfinancas.model.entity;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-
 
 @Entity
 @Table(name = "usuario", schema="minhasfinancas_api")
 @Data
+@Builder
 public class Usuario {
 
     @Id

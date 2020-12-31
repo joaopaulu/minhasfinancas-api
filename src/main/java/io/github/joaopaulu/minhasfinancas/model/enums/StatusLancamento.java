@@ -1,4 +1,4 @@
-package io.github.joaopaulu.minhasfinancas.model;
+package io.github.joaopaulu.minhasfinancas.model.enums;
 
 public enum StatusLancamento {
     PENDENTE,
