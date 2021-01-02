@@ -1,31 +1,23 @@
 package com.joaopaulu.minhasfinancas.api.resource;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.joaopaulu.minhasfinancas.model.entity.Lancamento;
-import com.joaopaulu.minhasfinancas.model.entity.Usuario;
-import com.joaopaulu.minhasfinancas.service.LancamentoService;
-import com.joaopaulu.minhasfinancas.service.UsuarioService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.joaopaulu.minhasfinancas.api.dto.AtualizaStatusDTO;
 import com.joaopaulu.minhasfinancas.api.dto.LancamentoDTO;
 import com.joaopaulu.minhasfinancas.exception.RegraNegocioException;
+import com.joaopaulu.minhasfinancas.model.entity.Lancamento;
+import com.joaopaulu.minhasfinancas.model.entity.Usuario;
 import com.joaopaulu.minhasfinancas.model.enums.StatusLancamento;
 import com.joaopaulu.minhasfinancas.model.enums.TipoLancamento;
-
+import com.joaopaulu.minhasfinancas.service.LancamentoService;
+import com.joaopaulu.minhasfinancas.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/lancamentos")
@@ -34,7 +26,7 @@ public class LancamentoResource {
 
 	private final LancamentoService service;
 	private final UsuarioService usuarioService;
-	
+
 	@GetMapping
 	public ResponseEntity buscar(
 			@RequestParam(value ="descricao" , required = false) String descricao,
@@ -52,7 +44,7 @@ public class LancamentoResource {
 		if(!usuario.isPresent()) {
 			return ResponseEntity.badRequest().body("Não foi possível realizar a consulta. Usuário não encontrado para o Id informado.");
 		}else {
-			lancamentoFiltro.setUsuario(usuario.get());
+			lancamentoFiltro.setUsuario(Collections.singleton(usuario.get()));
 		}
 		
 		List<Lancamento> lancamentos = service.buscar(lancamentoFiltro);
@@ -96,11 +88,6 @@ public class LancamentoResource {
 	public ResponseEntity atualizarStatus( @PathVariable("id") Long id , @RequestBody AtualizaStatusDTO dto ) {
 		return service.obterPorId(id).map( entity -> {
 			StatusLancamento statusSelecionado = StatusLancamento.valueOf(dto.getStatus());
-			
-			if(statusSelecionado == null) {
-				return ResponseEntity.badRequest().body("Não foi possível atualizar o status do lançamento, envie um status válido.");
-			}
-			
 			try {
 				entity.setStatus(statusSelecionado);
 				service.atualizar(entity);
@@ -148,7 +135,7 @@ public class LancamentoResource {
 			.obterPorId(dto.getUsuario())
 			.orElseThrow( () -> new RegraNegocioException("Usuário não encontrado para o Id informado.") );
 		
-		lancamento.setUsuario(usuario);
+		lancamento.setUsuario((Set<Usuario>) usuario);
 
 		if(dto.getTipo() != null) {
 			lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
